@@ -13,9 +13,8 @@ if __name__ == '__main__':
     parser.add_argument('--environment', nargs='?', default='CartPole-v0', help='Select the environment to run')
     parser.add_argument('--agent', nargs='?', default='QLearnerAgent', help='Select an agent')
     parser.add_argument('--monitor', nargs='?', default=True, help='Decide if you want monitor files')
-    parser.add_argument('--show', nargs='?', default=True, help='Decide if you want to see some runs')
     parser.add_argument('--episodes', nargs='?', default=1024, help='Select number of episodes to run')
-    parser.add_argument('--load', nargs='?', default=True, help='Decide if you want to load previous information')
+    parser.add_argument('--load', nargs='?', default=False, help='Decide if you want to load previous information')
 
     args = parser.parse_args()
     logger.set_level(logger.INFO)
