@@ -7,6 +7,7 @@ from gym import wrappers, logger
 from random_agent import RandomAgent
 from q_learner_agent import QLearnerAgent
 from completed_q_learner_agent import CompletedQLearnerAgent
+from deep_q_learner_agent import DQNAgent, EpsilonUpdater
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=None)
@@ -28,6 +29,9 @@ if __name__ == '__main__':
     np.random.seed(420)
 
     agent = eval(args.agent)(env.action_space, env.observation_space) # NEVER USE EVAL IN REAL LIFE!!!
+    if args.agent == 'DQNAgent':
+        epsilon = EpsilonUpdater(agent)
+        agent.add_observer(epsilon)
 
     if args.load:
         agent.load()
@@ -37,7 +41,7 @@ if __name__ == '__main__':
         while True:
             action = agent.pick_action(state)
             newState, reward, done, _ = env.step(action)
-            agent.learn(state, newState, action, reward)
+            agent.learn(state, newState, action, reward, done)
             agent.clean_up(i)
             state = newState
             if done:

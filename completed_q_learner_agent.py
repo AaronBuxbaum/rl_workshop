@@ -43,7 +43,7 @@ class CompletedQLearnerAgent(Agent):
         return max(0.1, min(1.0, 1.0 - math.log10((iteration + 1) / 25)))
 
     # Learn with Q-Learning
-    def learn(self, state, new_state, action, reward):
+    def learn(self, state, new_state, action, reward, *args):
         state = self.discretize(state)
         new_state = self.discretize(new_state)
         old_value = self.Q[state][action]
