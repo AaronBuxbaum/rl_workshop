@@ -15,11 +15,12 @@ if __name__ == '__main__':
     parser.add_argument('--monitor', nargs='?', default=True, help='Decide if you want monitor files')
     parser.add_argument('--episodes', nargs='?', default=1024, help='Select number of episodes to run')
     parser.add_argument('--load', nargs='?', default=False, help='Decide if you want to load previous information')
+    parser.add_argument('--maxsteps', nargs='?', default=1000, help='Select number of time steps before maximum is reached') # make the game much harder
 
     args = parser.parse_args()
     logger.set_level(logger.INFO)
     env = gym.make(args.environment)
-    env._max_episode_steps = 1000 # make the game much harder
+    env._max_episode_steps = int(args.maxsteps)
     if args.monitor:
         outdir = os.path.join(os.getcwd(), "recordings")
         env = wrappers.Monitor(env, directory=outdir, force=True)
