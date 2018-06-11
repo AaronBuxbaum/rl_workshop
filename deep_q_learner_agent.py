@@ -57,11 +57,6 @@ class DQNAgent(Agent):
             observer(event)
         pass
 
-    def pick_action(self, state):
-        self.step_count_total += 1
-        action = self.choose_action(state)
-        return action
-
     def learn(self, state, new_state, action, reward, done):
         obs = (state, action, new_state, reward, done)
         self.memory.store(obs)
@@ -84,7 +79,8 @@ class DQNAgent(Agent):
         #     print('Warning, loss is {}'.format(self.loss))
         pass
 
-    def choose_action(self, state):
+    def pick_action(self, state):
+        self.step_count_total += 1
         if np.random.rand() <= self.epsilon:
             choice = self.random_choice()
         else:
@@ -163,7 +159,7 @@ class NN:
     def update_target(self):
         weights = self.model.get_weights()
         self.model_t.set_weights(weights)
-        self.save('weights.h5')
+        self.save()
         pass
 
     def best_action(self, state, usetarget=False):
@@ -172,12 +168,12 @@ class NN:
         best_action = np.argmax(q_vals)
         return best_action
 
-    def save(self, fname):
-        self.model.save_weights(fname, overwrite=True)
+    def save(self):
+        self.model.save_weights('weights.h5', overwrite=True)
         pass
 
-    def load(self, fname):
-        self.model.load_weights(fname)
+    def load(self):
+        self.model.load_weights('weights.h5')
         self.update()
         pass
 
