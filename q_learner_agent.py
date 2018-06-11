@@ -38,6 +38,10 @@ class QLearnerAgent(Agent):
         new_state = [min(self.buckets[i] - 1, max(0, new_state[i])) for i in range(len(state))]
         return tuple(new_state)
 
+    # Decay vs iterations, including min and max values
+    def decay_with_iteration(self, iteration):
+        return max(0.1, min(1.0, 1.0 - math.log10((iteration + 1) / 25)))
+
     # TODO
     def learn(self, state, new_state, action, reward):
         pass
