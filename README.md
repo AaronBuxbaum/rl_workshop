@@ -1,4 +1,4 @@
-# Reinforcement Learning Workshop
+# Jet.com Reinforcement Learning Workshop
 
 1. Install Python: https://www.python.org/downloads/
 2. Install Homebrew: https://brew.sh/
