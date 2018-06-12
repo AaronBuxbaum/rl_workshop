@@ -7,7 +7,7 @@ from gym import wrappers, logger
 from random_agent import RandomAgent
 from q_learner_agent import QLearnerAgent
 from completed_q_learner_agent import CompletedQLearnerAgent
-from deep_q_learner_agent import DQNAgent, EpsilonUpdater
+from double_deep_q_learner_agent import DDQNAgent, EpsilonUpdater
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=None)
@@ -16,12 +16,13 @@ if __name__ == '__main__':
     parser.add_argument('--monitor', nargs='?', default=True, help='Decide if you want monitor files')
     parser.add_argument('--episodes', nargs='?', default=1024, help='Select number of episodes to run')
     parser.add_argument('--load', nargs='?', default=False, help='Decide if you want to load previous information')
-    parser.add_argument('--maxsteps', nargs='?', default=1000, help='Select number of time steps before maximum is reached') # make the game much harder
+    parser.add_argument('--maxsteps', nargs='?', default=1000, help='Select number of time steps for CartPole before maximum is reached') # make the game much harder
 
     args = parser.parse_args()
     logger.set_level(logger.INFO)
     env = gym.make(args.environment)
-    env._max_episode_steps = int(args.maxsteps)
+    if args.environment == 'CartPole-v0':
+        env._max_episode_steps = int(args.maxsteps)
     if args.monitor:
         outdir = os.path.join(os.getcwd(), "recordings")
         env = wrappers.Monitor(env, directory=outdir, force=True)
@@ -29,7 +30,7 @@ if __name__ == '__main__':
     np.random.seed(420)
 
     agent = eval(args.agent)(env.action_space, env.observation_space) # NEVER USE EVAL IN REAL LIFE!!!
-    if args.agent == 'DQNAgent':
+    if args.agent == 'DDQNAgent':
         epsilon = EpsilonUpdater(agent)
         agent.add_observer(epsilon)
 

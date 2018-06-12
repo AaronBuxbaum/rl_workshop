@@ -9,6 +9,7 @@ from keras.optimizers import SGD
 from agent import Agent
 
 
+
 EPSILON_MIN = 0.1
 EPSILON_MAX = 0.8
 EPSILON_DECAY = 0.00075
@@ -18,13 +19,10 @@ SIZE_HIDDEN = 16
 BATCH_SIZE = 32
 GAMMA = 0.99
 LEARNING_RATE = 0.0075
-MAX_STEPS = 2000
 ACTIVATION = 'tanh'
 LEARNING_START = 100
-N_EPISODES = 20000
-MONITOR_DIR = '/tmp/cartpole4'
 
-class DQNAgent(Agent):
+class DDQNAgent(Agent):
     def __init__(self, action_space, observation_space):
         self.memory = ReplayMemory(MEMORY_CAPACITY)
         self.dim_actions = action_space.n
@@ -39,8 +37,6 @@ class DQNAgent(Agent):
         self.epsilon_max = EPSILON_MAX
         self.epsilon_decay = EPSILON_DECAY
         self.target_update = TARGET_UPDATE
-        self.max_steps = MAX_STEPS
-        self.n_episodes = N_EPISODES
         self.epsilon = EPSILON_MAX
         self.batch_size = BATCH_SIZE
         self.usetarget = False
@@ -129,7 +125,7 @@ class NN:
 
     def _make_model(self, n_states, n_actions, size_hidden):
         model = Sequential()
-        model.add(Dense(size_hidden, input_dim=4, activation=self.act))
+        model.add(Dense(size_hidden, input_dim=n_actions*2, activation=self.act))
         model.add(Dense(size_hidden, activation=self.act))
         model.add(Dense(n_actions, activation='linear'))
         opt = SGD(lr=self.learning_rate, momentum=0.5, decay=1e-6, clipnorm=2)
@@ -139,13 +135,7 @@ class NN:
     def train(self, X, y):
         X = prep_batch(X)
         y = prep_batch(y)
-        loss = self.model.fit(X,
-                              y,
-                              batch_size=self.batch_size,
-                              epochs=1,
-                              verbose=0,
-                              shuffle=True)
-
+        loss = self.model.fit(X, y, batch_size=self.batch_size, epochs=1, verbose=0, shuffle=True)
         return loss
 
     def predict(self, state, usetarget=False):
@@ -173,9 +163,11 @@ class NN:
         pass
 
     def load(self):
-        self.model.load_weights('weights.h5')
-        self.update()
-        pass
+        try:
+            self.model.load_weights('weights.h5')
+            self.update()
+        except:
+            pass
 
 
 class ReplayMemory:
@@ -224,4 +216,4 @@ def prep_input(data, n_dimension):
 
 def prep_batch(to_prep):
     prep = np.vstack(to_prep)
-    return prep_batch
+    return prep
